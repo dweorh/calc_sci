@@ -1,7 +1,7 @@
-#include "symbolFunction.h"
-#include "symbolDivMultiply.h"
+#include "SymbolFunction.h"
+#include "SymbolDivMultiply.h"
 
-symbolFunction::symbolFunction(std::string c)
+dwe::SymbolFunction::SymbolFunction(std::string c)
 {
 	const double M_PI = 3.1415926;
 	init();
@@ -13,22 +13,22 @@ symbolFunction::symbolFunction(std::string c)
 }
 
 
-symbolFunction::~symbolFunction(void)
+dwe::SymbolFunction::~SymbolFunction(void)
 {
 
 }
 
-void symbolFunction::setPrevSymbol(symbol *prev_symbol){
+void dwe::SymbolFunction::setPrevSymbol(Symbol *prev_symbol){
 	if( prev_symbol->getType() == symbolType::cb
 		|| prev_symbol->getType() == symbolType::number
 	){
-		appendPreAddonSymbol( new symbolDivMultiply("*") );
+		appendPreAddonSymbol( new SymbolDivMultiply("*") );
 	}
 }
 
-double symbolFunction::calculate(double v){
+double dwe::SymbolFunction::calculate(double v){
 	double result = 0;
-	string func = getValue();
+	std::string func = getValue();
 
 	if( func == "abs")
 		result = fabs(v);

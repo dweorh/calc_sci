@@ -1,8 +1,8 @@
-#include "symbolOB.h"
-#include "symbolDivMultiply.h"
+#include "SymbolOB.h"
+#include "SymbolDivMultiply.h"
 
 
-symbolOB::symbolOB(void)
+dwe::SymbolOB::SymbolOB(void)
 {
 	init();
 	priority = 0;
@@ -11,14 +11,14 @@ symbolOB::symbolOB(void)
 	skip_calculation = true;
 }
 
-void symbolOB::setPrevSymbol(symbol *prev_symbol){
+void dwe::SymbolOB::setPrevSymbol(Symbol *prev_symbol){
 	if( prev_symbol->getType() == symbolType::cb
 		|| prev_symbol->getType() == symbolType::number
 	){
-		appendPreAddonSymbol( new symbolDivMultiply("*") );
+		appendPreAddonSymbol( new SymbolDivMultiply("*") );
 	}
 }
 
-symbolOB::~symbolOB(void)
+dwe::SymbolOB::~SymbolOB(void)
 {
 }
