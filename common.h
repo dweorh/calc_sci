@@ -3,24 +3,28 @@
 #include <vector>
 #include <typeinfo>
 #include <cctype>
-#include "symbols/symbol.h"
-#include "symbols/symbolCB.h"
-#include "symbols/symbolDivMultiply.h"
-#include "symbols/symbolFactorial.h"
-#include "symbols/symbolFunction.h"
-#include "symbols/symbolMinus.h"
-#include "symbols/symbolNumber.h"
-#include "symbols/symbolOB.h"
-#include "symbols/symbolPlus.h"
+#include "symbols/Symbol.h"
+#include "symbols/SymbolCB.h"
+#include "symbols/SymbolDivMultiply.h"
+#include "symbols/SymbolFactorial.h"
+#include "symbols/SymbolFunction.h"
+#include "symbols/SymbolMinus.h"
+#include "symbols/SymbolNumber.h"
+#include "symbols/SymbolOB.h"
+#include "symbols/SymbolPlus.h"
+#include "symbols/SymbolParameter.h"
 
-size_t strpos(const string &haystack, const string &needle);
+namespace dwe
+{
+	size_t strpos(const std::string& haystack, const std::string& needle);
 
-int in_array_str( string a[], int size, string lookfor );
-int in_array_chr( char a[], int size, char c);
-bool is_number(const string& s);
+	int in_array_str(std::string a[], int size, std::string lookfor);
+	int in_array_chr(char a[], int size, char c);
+	bool is_number(const std::string& s);
 
-string implode( const string &glue, const vector<string> &pieces );
-symbol* getSymbol( string &c );
-vector<string> string2Tokens( string &s);
-void removeLastTokenFromEquation(string &s);
-void rtrim(string*,char);
+	std::string implode(const std::string& glue, const std::vector<std::string>& pieces);
+	Symbol* getSymbol(std::string& c);
+	std::vector<std::string> string2Tokens(std::string& s);
+	void removeLastTokenFromEquation(std::string& s);
+	void rtrim(std::string*, char);
+}

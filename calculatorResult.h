@@ -1,26 +1,32 @@
 #pragma once
 #include <string>
-using namespace std;
-class calculatorResult{
-public:
-	string equation;
-	string onp;
-	string result;
-	string msg;
-	bool ok;
-	double d_result;
+namespace dwe
+{
+	class CalculatorResult {
+	public:
+		std::string equation;
+		std::string onp;
+		std::string result;
+		std::string msg;
+		bool ok;
+		double d_result;
+		double curParam;
+		int resolution;
 
-	calculatorResult(void){
-		reset();
-	}
-	~calculatorResult(void){}
+		CalculatorResult(void) {
+			reset();
+		}
+		~CalculatorResult(void) {}
 
-	void reset(){
-		equation = "";
-		onp = "";
-		result = "";
-		msg = "";
-		ok = true;
-		d_result = 0.0;
-	}
-};
+		void reset() {
+			equation = "";
+			onp = "";
+			result = "";
+			msg = "";
+			ok = true;
+			d_result = 0.0;
+			curParam = 0.0;
+			resolution = 0;
+		}
+	};
+}

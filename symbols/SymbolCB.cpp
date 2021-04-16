@@ -1,6 +1,6 @@
 #include "symbolCB.h"
 
-symbolCB::symbolCB(void)
+dwe::SymbolCB::SymbolCB(void)
 {
 	init();
 	priority = 0;
@@ -11,11 +11,11 @@ symbolCB::symbolCB(void)
 }
 
 
-symbolCB::~symbolCB(void)
+dwe::SymbolCB::~SymbolCB(void)
 {
 }
 
-bool symbolCB::rewind( symbol *oSymbol ){
+bool dwe::SymbolCB::rewind( Symbol *oSymbol ){
 	bool result;
 	result = oSymbol->getType() == symbolType::ob ? false : true;
 	return result;

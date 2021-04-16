@@ -1,6 +1,6 @@
-#include "symbolFactorial.h"
+#include "SymbolFactorial.h"
 
-symbolFactorial::symbolFactorial(std::string c)
+dwe::SymbolFactorial::SymbolFactorial(std::string c)
 {
 	init();
 	priority = 3;
@@ -9,15 +9,15 @@ symbolFactorial::symbolFactorial(std::string c)
 }
 
 
-symbolFactorial::~symbolFactorial(void)
+dwe::SymbolFactorial::~SymbolFactorial(void)
 {
 }
 
-double symbolFactorial::calculate( double v ){
+double dwe::SymbolFactorial::calculate( double v ){
 	return postCalculate((double)factorial(int(v)));
 }
 
-int symbolFactorial::factorial(int end){
+int dwe::SymbolFactorial::factorial(int end){
 	int result = 1;
 	int i = 1;
 	while( i <= end){

@@ -1,6 +1,6 @@
-#include "symbolDivMultiply.h"
+#include "SymbolDivMultiply.h"
 
-symbolDivMultiply::symbolDivMultiply(string s)
+dwe::SymbolDivMultiply::SymbolDivMultiply(std::string s)
 {
 	init();
 	if( s == "^" )
@@ -11,12 +11,12 @@ symbolDivMultiply::symbolDivMultiply(string s)
 	setValue(s);
 }
 
-symbolDivMultiply::~symbolDivMultiply(void)
+dwe::SymbolDivMultiply::~SymbolDivMultiply(void)
 {
 }
 
-double symbolDivMultiply::calculate(double v1, double v2){
-	string op = getValue();
+double dwe::SymbolDivMultiply::calculate(double v1, double v2){
+	std::string op = getValue();
 	double result = 0;
 	if( op == "*" )
 		result = v1 * v2;

@@ -1,7 +1,7 @@
-#include "symbolMinus.h"
+#include "SymbolMinus.h"
 #include "../common.h"
 
-symbolMinus::symbolMinus(std::string c)
+dwe::SymbolMinus::SymbolMinus(std::string c)
 {
 	init();
 	/* default settings */
@@ -13,11 +13,11 @@ symbolMinus::symbolMinus(std::string c)
 }
 
 
-symbolMinus::~symbolMinus(void)
+dwe::SymbolMinus::~SymbolMinus(void)
 {
 }
 
-void symbolMinus::setPrevSymbol(symbol *prev_symbol){
+void dwe::SymbolMinus::setPrevSymbol(Symbol *prev_symbol){
 	if( prev_symbol->getType() == symbolType::ob
 		|| prev_symbol->getType() == symbolType::minus
 		|| prev_symbol->getType() == symbolType::plus
@@ -33,10 +33,10 @@ void symbolMinus::setPrevSymbol(symbol *prev_symbol){
 	}	
 }
 	
-double symbolMinus::calculate( double v ){
+double dwe::SymbolMinus::calculate( double v ){
 	return postCalculate( v * (-1.0) );
 }	
 
-double symbolMinus::calculate( double v1, double v2 ){
+double dwe::SymbolMinus::calculate( double v1, double v2 ){
 	return postCalculate( v1 - v2 );
 }	

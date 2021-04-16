@@ -1,22 +1,22 @@
-#include "calculator.h"
-#include "symbols/symbol.h"
+#include "Calculator.h"
+#include "symbols/Symbol.h"
 
-calculator::calculator(calculatorResult *r){
+dwe::Calculator::Calculator(CalculatorResult *r){
 	result = r;
 }
 
-calculator::calculator(void)
+dwe::Calculator::Calculator(void)
 {
-	result = new calculatorResult();
+	result = new CalculatorResult();
 }
 
 
-calculator::~calculator(void)
+dwe::Calculator::~Calculator(void)
 {
 	delete result;
 }
 
-void calculator::setEquation( string eq ){
+void dwe::Calculator::setEquation(std::string eq ){
 	std::string result;
 	equation = eq;
 	// normalization of the equation
@@ -25,76 +25,137 @@ void calculator::setEquation( string eq ){
 	result.resize(equation.size());
 	std::remove_copy(equation.begin(), equation.end(), result.begin(), ' ');
 	equation = result;
-
+	requireParam = false;
+	if (equation.find('x') != std::string::npos) { // eg sin(x), x^3, etc.
+		requireParam = true;
+	}
+	clearCaches();
 	//std::replace(equation.begin(), equation.end(), ' ', ' ' );
 }
 
-vector<string> calculator::getTokens(){
-	return string2Tokens(equation);
+bool dwe::Calculator::requireParameter() {
+	return requireParam;
 }
 
-calculatorResult* calculator::calculate(void){
-	char result_buffer[250];
-	int vector_size;
-	double current_number,current_number2, calc_result;
-	vector<string> tokens;
-	vector<string> onp_simple;
-	vector<double> numbers_stack;
-	symbol *last_symbol = NULL;
-	symbol *current_s = NULL;
-	string current_token;
-	int brackets_diff = 0; // diff in number of open and close brackets
-	vector<symbol*> onp;
-	vector<symbol*> symbols;
-	vector<symbol*> stack;
-	vector<symbol*> pre_addon_symbols;
+void dwe::Calculator::setParameter(CalculatorParameter *val) {
+	delete parameter;
+	parameter = val;
+}
 
-	result->reset();
-	result->equation = equation;
-	
+void dwe::Calculator::setParameter(std::string val) {
+	delete parameter;
+	parameter = new CalculatorParameter(val);
+}
+void dwe::Calculator::clearCaches() {
+	tokens_cache.clear();
+	symbols_cache.clear();
+}
+
+std::vector<std::string> dwe::Calculator::getTokens(){
+	if (tokens_cache.size() == 0) {
+		tokens_cache = string2Tokens(equation);
+	}
+	return tokens_cache;
+}
+
+std::vector<dwe::Symbol*> dwe::Calculator::getSymbols(std::vector<Symbol*>& parameters) {
+	int vector_size;
+	int brackets_diff = 0; // diff in number of open and close brackets
+	std::string current_token;
+	Symbol* last_symbol = NULL;
+	Symbol* current_s = NULL;
+	std::vector<Symbol*> symbols;
+	std::vector<Symbol*> pre_addon_symbols;
+	std::vector<std::string> tokens;
+
+	/*if (symbols_cache.size() > 0) {
+		parameters = parameters_cache;
+		return symbols_cache;
+	}*/
 	tokens = getTokens();
-	
+
 	// reduce unary operators from equation
 	vector_size = tokens.size();
-	for(int i = 0; i < vector_size; i++){
+	for (int i = 0; i < vector_size; i++) {
 		current_token = tokens.at(i);
-		current_s = getSymbol( tokens.at(i) );
-		
-		if( current_s->getType() == symbolType::none ){
+		current_s = getSymbol(tokens.at(i));
+
+		if (current_s->getType() == symbolType::none) {
 			result->msg = "wrong symbol: " + current_token;
 			result->ok = false;
-			return result;
+			symbols.clear();
+			return symbols;
 		}
-		
-		if( last_symbol != NULL ) {
+
+		if (current_s->getType() == symbolType::parameter) {
+			parameters.push_back(current_s);
+		}
+
+		if (last_symbol != NULL) {
 			current_s->setPrevSymbol(last_symbol);
 			pre_addon_symbols = current_s->getPreAddonSymbols();
-			while(!pre_addon_symbols.empty()){
-				symbols.push_back( pre_addon_symbols.front() );
+			while (!pre_addon_symbols.empty()) {
+				symbols.push_back(pre_addon_symbols.front());
 				pre_addon_symbols.erase(pre_addon_symbols.begin());
 			}
 		}
 
-		if( last_symbol != NULL && (*last_symbol).isUnary() ){
+		if (last_symbol != NULL && (*last_symbol).isUnary()) {
 			current_s->addUnaryOperation(last_symbol);
 		}
-		if( ! current_s->isUnary() ){
-			symbols.push_back( current_s );
+		if (!current_s->isUnary()) {
+			symbols.push_back(current_s);
 		}
 
 		last_symbol = current_s;
 
-		if( current_s->getType() == symbolType::ob )
+		if (current_s->getType() == symbolType::ob)
 			brackets_diff++;
-		else if( current_s->getType() == symbolType::cb )
+		else if (current_s->getType() == symbolType::cb)
 			brackets_diff--;
 	}
-
-	if( brackets_diff != 0 ){
+	if (brackets_diff != 0) {
 		result->ok = false;
 		result->msg = "wrong syntax";
 		deleteInVector(&symbols);
+		symbols.clear();
+		return symbols;
+	}
+	/*symbols_cache = symbols;
+	parameters_cache = parameters;*/
+	return symbols;
+}
+
+
+dwe::CalculatorResult* dwe::Calculator::calculate(void){
+	char result_buffer[250];
+	int vector_size;
+	double current_number,current_number2, calc_result;
+	std::vector<std::string> onp_simple;
+	std::vector<double> numbers_stack;
+
+	Symbol* current_s = NULL;
+	Symbol* last_symbol = NULL;
+	std::vector<Symbol*> onp;
+	std::vector<Symbol*> symbols;
+	std::vector<Symbol*> stack;
+	std::vector<Symbol*> parameters;
+
+	result->reset();
+	result->equation = equation;
+	
+	symbols = getSymbols(parameters);
+
+	if (!result->ok) {
 		return result;
+	}
+
+	if (parameter != nullptr && parameters.size() > 0) {
+		result->curParam = parameter->curVal;
+		result->resolution = parameter->resolution;
+		for (int i = 0; i < parameters.size(); i++) {
+			parameters[i]->setValue(parameter->curVal);
+		}
 	}
 
 	// split symbols set to numbers and pure symbols 
@@ -205,7 +266,7 @@ calculatorResult* calculator::calculate(void){
 	}
 	current_s = NULL;
 	if( numbers_stack.size() > 0 ){
-		sprintf(result_buffer,"%f",numbers_stack.at(0));
+		sprintf_s(result_buffer,"%f",numbers_stack.at(0));
 		result->result = result_buffer;
 		rtrim(&result->result, '0');
 		rtrim(&result->result, '.');
@@ -218,4 +279,12 @@ calculatorResult* calculator::calculate(void){
 	}
 	deleteInVector(&onp);
 	return result;
+}
+
+dwe::CalculatorResult* dwe::Calculator::nextCalc(void) {
+	if (parameter == nullptr || parameter->resolution == 0 || parameter->curVal >= parameter->maxVal) {
+		return nullptr;
+	}
+	parameter->curVal += (parameter->maxVal - parameter->minVal) / parameter->resolution;
+	return calculate();
 }
