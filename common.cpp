@@ -33,15 +33,25 @@ namespace dwe {
 	bool is_number(const std::string& s)
 	{
 		bool already_has_dot = false;
+		bool has_negation = false;
 
 		for (int i = 0; i < (int)s.length(); i++) {
-			if (!std::isdigit(s[i]) && (s[i] != '.' || (s[i] == '.' && already_has_dot)))
+			if (!std::isdigit(s[i]) 
+					&& (s[i] != '.' || (s[i] == '.' && already_has_dot))
+					&& (s[i] != '-' || (s[i] == '-' && has_negation))
+				)
 				return false;
 			if (s[i] == '.') {
 				if (already_has_dot)
 					return false;
 				else
 					already_has_dot = true;
+			}
+			if (s[i] == '-') {
+				if (has_negation)
+					return false;
+				else
+					has_negation = true;
 			}
 		}
 
